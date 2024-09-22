@@ -75,6 +75,26 @@ func (q *Queries) GetColumn(ctx context.Context, id int32) (Column, error) {
 	return i, err
 }
 
+const getColumnByPosition = `-- name: GetColumnByPosition :one
+SELECT id, name, board_id, position, created_at, updated_at
+FROM columns
+WHERE position = $1 LIMIT 1
+`
+
+func (q *Queries) GetColumnByPosition(ctx context.Context, position int32) (Column, error) {
+	row := q.db.QueryRowContext(ctx, getColumnByPosition, position)
+	var i Column
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.BoardID,
+		&i.Position,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const listColumns = `-- name: ListColumns :many
 SELECT id, name, board_id, position, created_at, updated_at
 FROM columns

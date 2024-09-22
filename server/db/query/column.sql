@@ -7,6 +7,11 @@ SELECT *
 FROM columns
 WHERE id = $1 LIMIT 1;
 
+-- name: GetColumnByPosition :one
+SELECT *
+FROM columns
+WHERE position = $1 LIMIT 1;
+
 -- name: ListColumns :many
 SELECT *
 FROM columns

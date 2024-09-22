@@ -6,24 +6,32 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
 	CreateBoard(ctx context.Context, name string) (Board, error)
 	CreateColumn(ctx context.Context, arg CreateColumnParams) (Column, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTask(ctx context.Context, arg CreateTaskParams) (Task, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBoard(ctx context.Context, id int32) (Board, error)
 	DeleteColumn(ctx context.Context, id int32) (Column, error)
 	DeleteTask(ctx context.Context, id int32) (Task, error)
 	GetBoard(ctx context.Context, id int32) (Board, error)
 	GetColumn(ctx context.Context, id int32) (Column, error)
+	GetColumnByPosition(ctx context.Context, position int32) (Column, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTask(ctx context.Context, id int32) (Task, error)
+	GetUser(ctx context.Context, username string) (User, error)
 	ListBoards(ctx context.Context, arg ListBoardsParams) ([]Board, error)
 	ListColumns(ctx context.Context, arg ListColumnsParams) ([]Column, error)
 	ListTasks(ctx context.Context, arg ListTasksParams) ([]Task, error)
 	UpdateBoard(ctx context.Context, arg UpdateBoardParams) (Board, error)
 	UpdateColumn(ctx context.Context, arg UpdateColumnParams) (Column, error)
 	UpdateTask(ctx context.Context, arg UpdateTaskParams) (Task, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)
