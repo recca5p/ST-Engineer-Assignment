@@ -1,0 +1,29 @@
+name: Build and deploy Backend to EC2
+run-name: "#${{ github.run_number }} - ${{ github.ref_name }} - ${{ github.sha }} - Backend"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths: 'server'
+  pull_request:
+    branches: [ "main" ]
+    paths: 'server'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
