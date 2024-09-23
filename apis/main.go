@@ -16,6 +16,7 @@ func main() {
 	beerController := controllers.NewBeerController(beerService)
 
 	r.GET("/beers", beerController.GetBeers)
+	r.GET("/beers/:id", beerController.GetBeerByID)
 
-	r.Run(":8081") // Run on port 8080
+	r.Run(":8081")
 }

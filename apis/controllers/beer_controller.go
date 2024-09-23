@@ -33,3 +33,19 @@ func (c *BeerController) GetBeers(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, beers)
 }
+
+func (c *BeerController) GetBeerByID(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid beer ID"})
+		return
+	}
+
+	beer, err := c.Service.GetBeerByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Beer not found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, beer)
+}

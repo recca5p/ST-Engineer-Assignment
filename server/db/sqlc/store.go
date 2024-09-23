@@ -8,6 +8,7 @@ import (
 
 type Store interface {
 	Querier
+	UpdateBoardTx(ctx context.Context, args UpdateBoardTxParams) (string, error)
 }
 
 type SQLStore struct {

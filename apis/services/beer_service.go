@@ -19,3 +19,11 @@ func (s *BeerService) GetBeers(page, limit int) ([]models.Beer, error) {
 	err := s.DB.Offset(offset).Limit(limit).Find(&beers).Error
 	return beers, err
 }
+
+func (s *BeerService) GetBeerByID(id int) (*models.Beer, error) {
+	var beer models.Beer
+	if err := s.DB.First(&beer, id).Error; err != nil {
+		return nil, err
+	}
+	return &beer, nil
+}

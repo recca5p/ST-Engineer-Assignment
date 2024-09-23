@@ -143,3 +143,34 @@ func (server *Server) GetKanbanBoard(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, kanbanBoard)
 }
+
+type UpdateBoard struct {
+	Column  []db.ColumnRequest `json:"-"`
+	BoardID int32              `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) UpdateBoard(ctx *gin.Context) {
+	var req UpdateBoard
+	var reqColumns []db.ColumnRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&reqColumns); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	updateParams := db.UpdateBoardTxParams{
+		Column:  reqColumns,
+		BoardID: req.BoardID,
+	}
+
+	result, error := server.store.UpdateBoardTx(ctx, updateParams)
+	if error != nil {
+		ctx.JSON(http.StatusInternalServerError, error)
+		return
+	}
+	ctx.JSON(http.StatusOK, result)
+}
