@@ -23,3 +23,14 @@ go.work.sum
 
 # env file
 .env
+
+client/node_modules
+.idea/
+*.next
+graphql/.idea
+.DS_Store
+graphql/.idea/.gitignore
+graphql/.idea/.name
+graphql/.idea/GraphQL.iml
+graphql/.idea/modules.xml
+graphql/.idea/vcs.xml
