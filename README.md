@@ -36,7 +36,7 @@ This repository contains a full stack application with a Next.js frontend and a 
 
 1. Working path
    ```
-   cd ST-Engineer-Assignment/client
+   cd ST-Engineer-Assignment/server
    ```
 3. Set up the database:
    ```
