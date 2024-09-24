@@ -106,7 +106,7 @@ jobs:
               sudo docker pull $DOCKER_IMAGE
               
               # Run the new container with Nginx and Let's Encrypt
-              sudo docker run -dp 9090:8080 \
+              sudo docker run -dp 9090:9090 \
                 --name stegg-app \
                 --mount type=volume,source=letsencrypt,target=/etc/letsencrypt \
                 $DOCKER_IMAGE

@@ -25,7 +25,7 @@ COPY --from=build /app/myapp .
 COPY app.env .
 
 # Expose the port the app will run on
-EXPOSE 8080
+EXPOSE 9090
 
 # Command to run the app
 CMD ["./myapp"]
