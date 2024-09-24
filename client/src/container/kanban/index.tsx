@@ -51,9 +51,7 @@ const KanbanBoard = () => {
       }
     );
   };
-
-  const funcUpdateTask = (card) => {
-    console.log("card funcUpdateTask", card);
+  const funcCallUpdateBoard = (card) => {
     handleUpdateBoard(card.columns, {
       onSuccess: (res) => {
         ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
@@ -65,18 +63,6 @@ const KanbanBoard = () => {
     });
   };
 
-  // Function to handle task deletion with dynamic card info
-  const funcCallDeleteTask = (card) => {
-    handleUpdateBoard(card.columns, {
-      onSuccess: (res) => {
-        ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
-        console.log("Task created:", res);
-      },
-      onError: (error) => {
-        console.log("Error creating task:", error);
-      },
-    });
-  };
 
   const { title, board } = useBoardData(data);
 
@@ -94,14 +80,16 @@ const KanbanBoard = () => {
             allowRenameColumn={!(isLoadingGetBoard || isUpdating)}
             allowRemoveCard={!(isLoadingGetBoard || isUpdating)}
             onLaneRemove={console.log}
-            onCardRemove={(card) => funcCallDeleteTask(card)} // Pass the card ID dynamically
-            onLaneRename={(card) => funcUpdateTask(card)}
+            onCardRemove={(card) => funcCallUpdateBoard(card)}
+            onLaneRename={(card) => funcCallUpdateBoard(card)}
+            onColumnRename={(card) => funcCallUpdateBoard(card)}
+            onColumnDragEnd={(card) => funcCallUpdateBoard(card)}
+            onCardDragEnd={(card) => funcCallUpdateBoard(card)}
             initialBoard={board}
             allowAddCard={{ on: "top" }}
             disableColumnDrag={isLoadingGetBoard || isUpdating}
             disableCardDrag={isLoadingGetBoard || isUpdating}
             onNewCardConfirm={(draftCard) => ({
-              id: new Date().getTime(),
               title: draftCard.title,
               description: draftCard.description || "No description",
             })}
