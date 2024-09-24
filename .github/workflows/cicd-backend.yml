@@ -74,4 +74,40 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         file: ${{ env.WORKING_DIRECTORY }}/Dockerfile 
 
-
+  deploy:
+      runs-on: ubuntu-latest
+      needs: build
+      steps: 
+        - name: Decode EC2 Key
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.EC2_KEY }}" | base64 --decode > ~/.ssh/ec2-key.pem
+            ls -l ~/.ssh
+            
+        - name: Set permissions for EC2 key
+          run: |
+            chmod 600 ~/.ssh/ec2-key.pem
+            ls -l ~/.ssh
+    
+        - name: Deploy to EC2
+          env:
+            EC2_USER: ubuntu
+            EC2_HOST: ${{ secrets.EC2_HOST }}
+            EC2_KEY_PATH: ~/.ssh/ec2-key.pem
+            DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/stegg:${{ github.sha }}
+          run: |
+            ssh -o StrictHostKeyChecking=no -i $EC2_KEY_PATH $EC2_USER@$EC2_HOST <<EOF
+              # Clean up previous containers and images
+              sudo docker stop stegg-app || true
+              sudo docker rm -f stegg-app || true
+              sudo docker rmi -f $DOCKER_IMAGE || true
+              
+              # Pull the new Docker image
+              sudo docker pull $DOCKER_IMAGE
+              
+              # Run the new container with Nginx and Let's Encrypt
+              sudo docker run -dp 9090:8080 \
+                --name stegg-app \
+                --mount type=volume,source=letsencrypt,target=/etc/letsencrypt \
+                $DOCKER_IMAGE
+            EOF
