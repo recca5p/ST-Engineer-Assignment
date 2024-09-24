@@ -25,6 +25,18 @@ export interface BoardEntity {
   columns: BoardColumn[];
 }
 
+export interface BoardUpdateEntity {
+  id: number;
+  title: string;
+  cards: BoardCardUpdate[];
+}
+
+export interface BoardCardUpdate {
+  id: number;
+  title: string;
+  description: string;
+}
+
 export interface CreateTaskRequest {
   name: string;
   position: number;

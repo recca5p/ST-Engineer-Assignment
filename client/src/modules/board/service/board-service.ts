@@ -1,7 +1,11 @@
 import BaseService from "@/config/service/base-service";
 import fetcher from "@/config/service/fetcher-service";
 import BaseResponse from "@/config/entities/core-entities";
-import { BoardEntity, CreateTaskRequest } from "../entities/board-entities";
+import {
+  BoardEntity,
+  BoardUpdateEntity,
+  CreateTaskRequest,
+} from "../entities/board-entities";
 
 class BoardService implements BaseService {
   readonly QUERY_KEY = {
@@ -16,6 +20,10 @@ class BoardService implements BaseService {
     return this.fetcher.get<BoardEntity>(this.QUERY_KEY.BOARD, {});
   };
 
+  updateBoard = (body: BoardUpdateEntity) => {
+    return this.fetcher.put<BaseResponse<any>>(this.QUERY_KEY.BOARD, body);
+  };
+
   createStack = (body: CreateTaskRequest) => {
     return this.fetcher.post<BaseResponse<any>>(
       this.QUERY_KEY.CREATE_TASK,
@@ -25,7 +33,7 @@ class BoardService implements BaseService {
 
   deleteTask = (id: number) => {
     return this.fetcher.delete<BaseResponse<any>>(
-        this.QUERY_KEY.DELETE_TASK+"/"+id
+      this.QUERY_KEY.DELETE_TASK + "/" + id
     );
   };
 }

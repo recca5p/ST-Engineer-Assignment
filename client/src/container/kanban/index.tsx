@@ -3,94 +3,116 @@
 import React from "react";
 import Board from "@asseinfo/react-kanban";
 import { useBoardData } from "./hooks/useBoardData";
-import { useGetBoard } from "@/modules/board";
+import { useGetBoard, useUpdateBoard } from "@/modules/board";
 import { useCreateTask } from "@/modules/board/application/use-create-task";
 import { useQueryClient } from "react-query";
 import boardService from "@/modules/board/service/board-service";
 import { LoaderCircle } from "lucide-react";
-import { useDeleteTask } from "@/modules/board/application/use-delete-task";
 
 const KanbanBoard = () => {
-    const ql = useQueryClient();
+  const ql = useQueryClient();
 
-    const { data, isLoading: isLoadingGetBoard } = useGetBoard();
-    const { mutate: handleCreateTask } = useCreateTask();
-    const { mutate: handleDeleteTask } = useDeleteTask();
+  const { data, isLoading: isLoadingGetBoard } = useGetBoard();
+  const { mutate: handleUpdateBoard, isLoading: isUpdating } = useUpdateBoard();
 
-    // Function to handle task creation with dynamic card info
-    const funcCallCreateTask = (newCard, columnId) => {
-        handleCreateTask(
-            {
-                columnid: columnId,
-                name: newCard.name,
-                position: newCard.position || 1,
-                description: newCard.description || "No description",
-            },
-            {
-                onSuccess: (res) => {
-                    ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
-                    console.log("Task created:", res);
-                },
-                onError: (error) => {
-                    console.log("Error creating task:", error);
-                },
-            }
-        );
-    };
+  // Function to handle task creation with dynamic card info
+  const funcCallCreateTask = (newCard, columnId: number) => {
+    console.log("newCard", newCard, "columnId", columnId);
+    const defaultCards = (data?.columns || []).filter(
+      (column) => column.id === columnId
+    )[0].tasks;
+    const cards = newCard.columns.filter((column) => column.id === columnId)[0]
+      .cards;
 
-    // Function to handle task deletion with dynamic card info
-    const funcCallDeleteTask = (cardId) => {
-        handleDeleteTask(
-            cardId,
-            {
-                onSuccess: (res) => {
-                    ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
-                    console.log("Task deleted:", res);
-                },
-                onError: (error) => {
-                    console.log("Error deleting task:", error);
-                },
-            }
-        );
-    };
+    const transformCards = (cards ?? []).map((card) => ({
+      ...((defaultCards ?? []).map((c) => c.id).includes(card.id)
+          ? { id: card.id }
+          : {}),
+      title: card.title,
+      description: card.description,
+    }));
 
-    const { title, board } = useBoardData(data);
 
-/*
-    console.table("board", board);
-*/
 
-    return (
-        <div className="flex flex-col justify-center h-full items-center p-5">
-            {isLoadingGetBoard ? (
-                <div className="h-full w-full">
-                    <LoaderCircle className="animate-spin" />{" "}
-                </div>
-            ) : (
-                <>
-                    <div className="text-white text-[28px] font-bold">{title}</div>
-                    <Board
-                        allowRemoveLane
-                        allowRenameColumn
-                        allowRemoveCard
-                        onLaneRemove={console.log}
-                        onCardRemove={(card) => funcCallDeleteTask(card.id)}
-                        onLaneRename={console.log}
-                        onCardDragEnd={console.log}
-                        onColumnDragEnd={console.log}
-                        initialBoard={board}
-                        allowAddCard={{ on: "top" }}
-                        onNewCardConfirm={(draftCard) => ({
-                            id: new Date().getTime(),
-                            title: draftCard.title,
-                            description: draftCard.description || "No description",
-                        })}
-                        onCardNew={console.log}
-                    />
-                </>
-            )}
-        </div>
+    handleUpdateBoard(
+      newCard.columns.map((column) => ({
+        id: column.id,
+        title: column.title,
+        cards: column.id === columnId ? transformCards : column.cards,
+      })),
+      {
+        onSuccess: (res) => {
+          ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
+          console.log("Task created:", res);
+        },
+        onError: (error) => {
+          console.log("Error creating task:", error);
+        },
+      }
     );
+  };
+
+  const funcUpdateTask = (card) => {
+    console.log("card funcUpdateTask", card);
+    handleUpdateBoard(card.columns, {
+      onSuccess: (res) => {
+        ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
+        console.log("Task created:", res);
+      },
+      onError: (error) => {
+        console.log("Error creating task:", error);
+      },
+    });
+  };
+
+  // Function to handle task deletion with dynamic card info
+  const funcCallDeleteTask = (card) => {
+    handleUpdateBoard(card.columns, {
+      onSuccess: (res) => {
+        ql.invalidateQueries([boardService.QUERY_KEY.BOARD]);
+        console.log("Task created:", res);
+      },
+      onError: (error) => {
+        console.log("Error creating task:", error);
+      },
+    });
+  };
+
+  const { title, board } = useBoardData(data);
+
+  return (
+    <div className="flex flex-col justify-center h-full items-center p-5">
+      {isLoadingGetBoard ? (
+        <div className="h-full w-full">
+          <LoaderCircle className="animate-spin" />{" "}
+        </div>
+      ) : (
+        <>
+          <div className="text-white text-[28px] font-bold">{title}</div>
+          <Board
+            allowRemoveLane={!(isLoadingGetBoard || isUpdating)}
+            allowRenameColumn={!(isLoadingGetBoard || isUpdating)}
+            allowRemoveCard={!(isLoadingGetBoard || isUpdating)}
+            onLaneRemove={console.log}
+            onCardRemove={(card) => funcCallDeleteTask(card)} // Pass the card ID dynamically
+            onLaneRename={(card) => funcUpdateTask(card)}
+            initialBoard={board}
+            allowAddCard={{ on: "top" }}
+            disableColumnDrag={isLoadingGetBoard || isUpdating}
+            disableCardDrag={isLoadingGetBoard || isUpdating}
+            onNewCardConfirm={(draftCard) => ({
+              id: new Date().getTime(),
+              title: draftCard.title,
+              description: draftCard.description || "No description",
+            })}
+            onCardNew={(newCard, column) =>
+              funcCallCreateTask(newCard, column.id)
+            } // Pass new card and column info
+          />
+        </>
+      )}
+    </div>
+  );
 };
 
 export default KanbanBoard;
