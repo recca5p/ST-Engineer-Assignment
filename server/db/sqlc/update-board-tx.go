@@ -54,8 +54,6 @@ func (store *SQLStore) UpdateBoardTx(ctx context.Context, args UpdateBoardTxPara
 				if err != nil {
 					return err
 				}
-				/*				column.ID = newColumn.ID // Update the ID after creation
-				 */
 			}
 
 			listTasksParams := ListTasksParams{
