@@ -21,7 +21,6 @@ type Querier interface {
 	DeleteTask(ctx context.Context, id int32) (Task, error)
 	GetBoard(ctx context.Context, id int32) (Board, error)
 	GetColumn(ctx context.Context, id int32) (Column, error)
-	GetColumnByPosition(ctx context.Context, position int32) (Column, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTask(ctx context.Context, id int32) (Task, error)
 	GetUser(ctx context.Context, username string) (User, error)
