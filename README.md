@@ -169,15 +169,4 @@ To view the coverage results:
 1. After the workflow completes, navigate to the "Actions" tab in your GitHub repository.
 2. Select the latest workflow run.
 3. Under the "Artifacts" section, you’ll find the coverage reports available for download.
-4. Download `coverage.html` and open it in your web browser to see a visual representation of test coverage across your codebase.
-
-### Coverage Thresholds
-
-For this project, we aim to maintain a high level of test coverage to ensure robustness. While there’s no strict coverage threshold defined, we recommend aiming for at least 80% coverage to have confidence in the stability of the application. You can adjust the coverage goals as necessary based on your team’s needs and the complexity of the codebase.
-
-### Benefits of Coverage Reports
-
-- **Identifying Uncovered Code**: The coverage report helps identify areas of the code that lack tests, allowing you to improve test coverage over time.
-- **Improving Code Quality**: High test coverage often leads to better code quality and fewer bugs, as more scenarios are tested.
-- **Confidence in Changes**: When making changes to the codebase, having comprehensive test coverage provides reassurance that existing functionality remains intact.
-
+4. Download `coverage.html` and open it in your web browser to see a visual representation of test coverage across your codebase
