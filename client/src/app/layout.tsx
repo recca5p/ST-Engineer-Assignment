@@ -8,6 +8,8 @@ import "./globals.css";
 import ReactQueryProvider from "@/config/react-query";
 import { useState } from "react";
 import { getQueryClientInstance } from "@/config/react-query/query";
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,18 +23,19 @@ const geistMono = localFont({
 });
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: {
   children: React.ReactNode;
-}>) {
-  const [queryClient] = useState(() => getQueryClientInstance());
+}) {
+  const queryClient = useState(() => new QueryClient())[0];
+
   return (
-    <html lang="en">
+      <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReactQueryProvider client={queryClient}>{children}</ReactQueryProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </body>
-    </html>
+      </html>
   );
 }
