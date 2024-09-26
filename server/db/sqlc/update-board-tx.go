@@ -111,6 +111,9 @@ func (store *SQLStore) UpdateBoardTx(ctx context.Context, args UpdateBoardTxPara
 		return err
 	})
 
+	if err != nil {
+		return "", err
+	}
 	result = "update success"
 
 	return result, err
