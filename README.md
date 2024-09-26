@@ -146,3 +146,27 @@ The workflow uses several secrets and environment variables:
 - `EC2_HOST`: EC2 instance hostname or IP address
 
 Ensure these secrets are properly set in your GitHub repository settings under "Secrets and variables" > "Actions".
+
+## Test Coverage
+
+Test coverage is an essential part of maintaining code quality and ensuring that your application behaves as expected. This project includes automated tests for the Go backend, and we use Go's built-in coverage tool to measure how much of our code is tested.
+
+### Generating Coverage Reports
+
+During the CI/CD pipeline, the coverage report is generated after running the tests. The steps are as follows:
+
+1. **Run Tests**: The `go test` command is executed with the `-coverprofile` flag to create a coverage profile file (`coverage.out`).
+2. **Generate HTML Report**: The coverage profile is then processed to create an HTML report (`coverage.html`), which provides a detailed view of which parts of the codebase are covered by tests.
+
+### Coverage Reports in CI/CD
+
+In the CI/CD workflow, the generated coverage reports are uploaded as artifacts. After a successful run of the workflow, you can download the coverage reports directly from the Actions tab in your GitHub repository.
+
+### Analyzing Coverage
+
+To view the coverage results:
+
+1. After the workflow completes, navigate to the "Actions" tab in your GitHub repository.
+2. Select the latest workflow run.
+3. Under the "Artifacts" section, you’ll find the coverage reports available for download.
+4. Download `coverage.html` and open it in your web browser to see a visual representation of test coverage across your codebase
